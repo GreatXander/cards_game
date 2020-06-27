@@ -21,6 +21,7 @@ class player:
     player.player1 = self.name
     player.mazoplayer1 = self.barajasplayer1[mazo]
     self.mazo = self.barajasplayer1[mazo]
+    self.confirmazo = 'mazo1'
     
     return 'Player 1 is: ' + self.name, self.mazo
   
@@ -29,21 +30,38 @@ class player:
     player.player2 = self.name
     player.mazoplayer2 = self.barajasplayer2[mazo]
     self.mazo = self.barajasplayer2[mazo]
-    
+    self.confirmazo = 'mazo2'
+
     return 'Player 2 is: ' + self.name, self.mazo
 
 class game(player):
-  packagecard = None
+  playerturn = None
+  cardfrompackage = '[?]'
+  packagenumber = 0
+
   cardtotake = None
 
   @staticmethod
   def startgame(startplayer, cardtotake):
 
-    if str(cardtotake) in game.cards and startplayer == 1 or startplayer == 2:
+    if str(cardtotake) in game.cards and startplayer == 1:
+      game.playerturn = 1
+
       print 'Player 1: ' + game.player1, game.mazoplayer1
       print ''
       
-      print '      Package: ' + '[?]' + '       Take:' + str([cardtotake])
+      print '      Package: ' + game.cardfrompackage + '     Take:' + str([cardtotake])
+      print ''
+      
+      return 'Player 2: ' + game.player2, ['?', '?', '?', '?', '?']
+    
+    if str(cardtotake) in game.cards and startplayer == 2:
+      game.playerturn = 2
+
+      print 'Player 1: ' + game.player1, ['?', '?', '?', '?', '?']
+      print ''
+      
+      print '      Package: ' + game.cardfrompackage + '     Take:' + str([cardtotake])
       print ''
       
       return 'Player 2: ' + game.player2, game.mazoplayer2
@@ -56,3 +74,29 @@ class game(player):
     
     if str(cardtotake) not in game.cards and startplayer > 2 or  str(cardtotake) not in game.cards and startplayer < 1:
       return 'Choose a valid player to start and a valid card to show'
+  
+  @property
+  def takefrompackage(self):
+    if game.playerturn == 1 and self.confirmazo == 'mazo1':
+      game.packagenumber += 1
+      game.playerturn = 2
+      game.cardfrompackage = game.cards[game.packagenumber-1]
+      print ''
+      print self.name + ' takes!'
+      return 'The card is: ' + str(game.cardfrompackage) + ',' + ' you must take it or leave it!'
+    
+    if game.playerturn == 2 and self.confirmazo == 'mazo2':
+      game.packagenumber += 1
+      game.playerturn = 1
+      game.cardfrompackage = game.cards[game.packagenumber-1]
+      print ''
+      print self.name + ' takes!'
+      return 'The card is: ' + str(game.cardfrompackage) + ',' + ' you must take it or leave it!'
+    
+    if game.playerturn == 1 and self.confirmazo == 'mazo2':
+      print ''
+      return 'Is the turn of ' + game.player1 + '!'
+    
+    if game.playerturn == 2 and self.confirmazo == 'mazo1':
+      print ''
+      return 'Is the turn of ' + game.player2 + '!'
