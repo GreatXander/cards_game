@@ -53,11 +53,11 @@ class game(player):
     if str(cardtotake) in game.cards and startplayer == 1:
       game.playerturn = 1
       game.displayedcard = cardtotake
-
+      
       print 'Player 1: ' + game.player1, game.mazoplayer1
       print ''
       
-      print '      Package: ' + '[?]' + '     Take:' + str([game.displayedcard])
+      print '      Package: ' + '[?]' + '     Take: ' + str([game.displayedcard])
       print ''
       
       return 'Player 2: ' + game.player2, ['?', '?', '?', '?', '?']
@@ -71,10 +71,10 @@ class game(player):
       print 'Player 1: ' + game.player1, ['?', '?', '?', '?', '?']
       print ''
       
-      print '      Package: ' + '[?]' + '     Take:' + str(game.displayedcard)
+      print '      Package: ' + '[?]' + '     Take: ' + str([game.displayedcard])
       print ''
       
-      return 'Player 2: ' + game.player2, game.mazoplayer2
+      print 'Player 2: ' + game.player2, game.mazoplayer2
 
 ######################### START EXCEPTIONS ###################
     
@@ -95,8 +95,8 @@ class game(player):
   playeronetaked = False
   playertwotaked = False
 
-  cardsfrompackage = None
-  cardnumber = 0
+  cardfrompackage = None
+  cardnumber = -1
 
 ################### TAKE CARD FROM PACKAGE ###################
 
@@ -119,7 +119,7 @@ class game(player):
         game.cardnumber += 1
         game.playerturn = 1
         game.playeronetaked = True
-        game.cardfrompackage = game.cards[game.cardnumber-1]
+        game.cardfrompackage = game.cards[game.cardnumber]
         
         print ''
         print self.name + ' takes from package!'
@@ -138,7 +138,7 @@ class game(player):
         game.cardnumber += 1
         game.playerturn = 2
         game.playertwotaked = True
-        game.cardfrompackage = game.cards[game.cardnumber-1]
+        game.cardfrompackage = game.cards[game.cardnumber]
         
         print ''
         print self.name + ' takes from package!'
@@ -164,13 +164,17 @@ class game(player):
 
 ########################## KEEP THE CARD ##########################
   
+  playeronekeep = False
+  playertwokeep = False
+
   @property
   def keep(self):  
 
 ######################### PLAYER 1 KEEPS ##########################
     
-    if game.playerturn == 1 and self.playerid == 1 and len(game.mazoplayer1) < 6:
-      
+    if game.playerturn == 1 and self.playerid == 1 and game.playeronetaked == True and len(game.mazoplayer1) < 6 :
+
+      game.playeronekeep = True
       game.mazoplayer1.append(game.cardfrompackage)
       
       cls()
@@ -181,17 +185,18 @@ class game(player):
 
 ######################### PLAYER 2 KEEPS ##########################
     
-    if game.playerturn == 2 and self.playerid == 2 and len(game.mazoplayer2) < 6:
+    if game.playerturn == 2 and self.playerid == 2 and game.playertwotaked == True and len(game.mazoplayer2) < 6:
       
+      game.playertwokeep = True
       game.mazoplayer2.append(game.cardfrompackage)
       
       cls()
-      print "You can't take more cards and have to leave 1!"
+      print game.startgame(game.playerturn, game.displayedcard)
       print ''
       
-      return game.startgame(game.playerturn, game.displayedcard)
+      return "You can't take more cards and have to leave 1!"   
 
-####################### KEEP EXCEPTIONS ############################
+######################## KEEP EXCEPTIONS ############################
     
     if game.playerturn == 1 and self.playerid == 2:
       
@@ -202,3 +207,119 @@ class game(player):
       
       print ''
       return 'Is the turn of ' + game.player2 + '!'
+    
+    if self.playerid == 1 and game.playeronetaked == False:
+      print ''
+      return game.player1 + '!, ' + "you can't keep a card if you don't take before!"
+    
+    if self.playerid == 2 and game.playertwotaked == False:
+      print ''
+      return game.player2 + '!, ' + "you can't keep a card if you don't take before!"
+
+######################### LEAVE CARD ############################
+  
+  def leave(self, card):
+    
+######################### PLAYER 1 LEAVES #######################
+    
+    if game.playerturn == 1 and self.playerid == 1 and game.playeronekeep == True:
+      
+      game.playeronetaked = False
+      game.playeronekeep = False
+      
+      if card in game.mazoplayer1:
+        for i in range(-1, len(game.mazoplayer1)):
+          
+          if game.mazoplayer1[i] == card:
+            
+            game.mazoplayer1.remove(game.mazoplayer1[i])
+            game.displayedcard = card
+            game.playerturn = 2
+            
+            cls()
+            print game.player1 + ' leaves the card ' + card + '!'
+            print ''
+            print game.startgame(game.playerturn, game.displayedcard)
+            print ''
+            
+            return 'Is your turn ' + game.player2 + '!'
+    
+    if game.playerturn == 1 and self.playerid == 1 and game.playeronetaked == True and game.playeronekeep == False and card == '':
+      
+      game.playeronetaked == False
+
+      if len(game.mazoplayer2) > 5:
+        game.displayedcard = game.mazoplayer2.pop()
+      else:
+        game.displayedcard = game.cardfrompackage
+        
+      game.playerturn = 2
+
+      cls()
+      print game.player1 + ' leaves the card ' + game.displayedcard + '!'
+      print ''
+      print game.startgame(game.playerturn, game.displayedcard)
+      print ''
+    
+      return 'Is your turn ' + game.player2 + '!'
+
+########################## PLAYER 2 LEAVES ########################    
+    
+    if game.playerturn == 2 and self.playerid == 2 and game.playertwokeep == True:
+      
+      game.playertwotaked = False
+      game.playertwokeep = False
+      
+      if card in game.mazoplayer2:
+        for i in range(-1, len(game.mazoplayer2)):
+          
+          if game.mazoplayer2[i] == card:
+            
+            game.mazoplayer2.remove(game.mazoplayer2[i])
+            game.displayedcard = card
+            game.playerturn = 1
+            
+            cls()
+            print 'Is your turn ' + game.player1 + '!'
+            print ''
+            print game.startgame(game.playerturn, game.displayedcard)
+            print ''
+            
+            return game.player2 + ' leaves the card ' + card + '!'
+            
+    if game.playerturn == 2 and self.playerid == 2 and game.playeronetaked == True and game.playeronekeep == False and card == '':
+      
+      game.playertwotaked == False
+      
+      if len(game.mazoplayer2) > 5:
+        game.displayedcard = game.mazoplayer2.pop()
+      else:
+        game.displayedcard = game.cardfrompackage
+      
+      game.playerturn = 1
+
+      cls()
+      print 'Is your turn ' + game.player1 + '!'
+      print ''
+      print game.startgame(game.playerturn, game.displayedcard)
+      print ''
+      
+      return game.player2 + ' leaves the card ' + game.displayedcard + '!'
+
+########################### LEAVE EXCEPTIONS #######################
+    
+    if game.playerturn == 1 and self.playerid == 2:
+      print ''
+      return 'Is the turn of ' + game.player1 + '!'
+    
+    if game.playerturn == 2 and self.playerid == 1:
+      print ''
+      return 'Is the turn of ' + game.player2 + '!'
+    
+    if self.playerid == 1 and game.playeronetaked == False:
+      print ''
+      return game.player1 + '!, ' + "you can't leave a card if you don't take or keep before!"
+    
+    if self.playerid == 2 and game.playertwotaked == False:
+      print ''
+      return game.player2 + '!, ' + "you can't leave a card if you don't take or keep before!"
