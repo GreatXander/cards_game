@@ -35,11 +35,11 @@ class player:
 
     if player.player_id == 1:
       player.player1 = self.name
-      player.mazoplayer1 = player.barajasplayer1[mazo]
+      player.mazoplayer1 = player.barajasplayer1[mazo-1]
     
     if player.player_id == 2:
       player.player2 =self.name
-      player.mazoplayer2 = player.barajasplayer2[mazo]
+      player.mazoplayer2 = player.barajasplayer2[mazo-1]
     
     if player.player_id > 2:
       print 'In the game must be 2 players!'
@@ -55,10 +55,72 @@ class game(player):
   playerturn = None
   displayedcard = None
 
+############################# CHECK WINNER #######################
+  playeronewins = False
+  playertwowins = False
+
+############################ PLAYER 1 ############################
+  
+  @classmethod
+  def Winnerone(cls, result, i, count):
+    
+    if i < len(cls.mazoplayer1):
+      for info in cls.mazoplayer1:
+        if cls.mazoplayer1[i] == info:
+          count+= 1
+      result.append(count)
+      return cls.Winnerone(result, i+1, 0)
+    
+    if 3 in result and 2 in result:
+      cls.playeronewins = True
+      for i in range(-1, len(result)-1):
+        if result[i] == 1:
+          game.mazoplayer1 = game.mazoplayer1[:i] + game.mazoplayer1[i+1:]
+        else:
+          game.mazoplayer1
+      return cls.playeronewins
+    return False
+
+########################### PLAYER 2 ############################## 
+  
+  @classmethod
+  def Winnertwo(cls, result, i, count):
+    
+    if i < len(cls.mazoplayer2):
+      for info in cls.mazoplayer2:
+        if cls.mazoplayer2[i] == info:
+          count+= 1
+      result.append(count)
+      return cls.Winnertwo(result, i+1, 0)
+    
+    if 3 in result and 2 in result:
+      cls.playertwowins = True
+      for i in range(-1, len(result)-1):
+        if result[i] == 1:
+          game.mazoplayer2 = game.mazoplayer2[:i] + game.mazoplayer2[i+1:]
+        else:
+          game.mazoplayer2
+      return cls.playertwowins
+    return False
+
+########################## WINNER RESULTS ################################## 
+  
+  @staticmethod
+  def Winneresult():
+    if game.Winnerone([], 0, 0):
+      cls()
+      return game.player1 + ' WINS!', game.mazoplayer1
+    
+    if game.Winnertwo([], 0, 0):
+      cls()
+      return game.player2 + ' WINS!', game.mazoplayer2
+
 ######################### START GAME ########################
   @staticmethod
   def startgame(startplayer, cardtotake):
 
+    if game.Winneresult():
+      return game.Winneresult()
 ######################## PLAYER 1 START #####################
     
     if str(cardtotake) in game.cards and startplayer == 1:
@@ -108,56 +170,6 @@ class game(player):
       return 'Choose a valid player to start and a valid card to show'
 
 ################### PLAYERS ACTIONS FUNCTIONS ######################
-
-############################# CHECK WINNER #######################
-  playeronewins = False
-  playertwowins = False
-
-############################ PLAYER 1 ############################
-  
-  @classmethod
-  def Winnerone(cls, result, i, count):
-    
-    if i < len(cls.mazoplayer1):
-      for info in cls.mazoplayer1:
-        if cls.mazoplayer1[i] == info:
-          count+= 1
-      result.append(count)
-      return cls.Winnerone(result, i+1, 0)
-    
-    if 3 in result and 2 in result:
-      cls.playeronewins = True
-      return cls.playeronewins
-    return False
-
-########################### PLAYER 2 ############################## 
-  
-  @classmethod
-  def Winnertwo(cls, result, i, count):
-    
-    if i < len(cls.mazoplayer2):
-      for info in cls.mazoplayer2:
-        if cls.mazoplayer2[i] == info:
-          count+= 1
-      result.append(count)
-      return cls.Winnertwo(result, i+1, 0)
-    
-    if 3 in result and 2 in result:
-      cls.playertwowins = True
-      return cls.playertwowins
-    return False
-
-########################## RESULTS ################################## 
-  
-  @staticmethod
-  def Winneresult():
-    if game.Winnerone([], 0, 0):
-      cls()
-      return game.player1 + ' WINS!', game.mazoplayer1
-    
-    if game.Winnertwo([], 0, 0):
-      cls()
-      return game.player2 + ' WINS!', game.mazoplayer2
 
 ################### TAKE CARD FROM PACKAGE ###################
   
@@ -261,7 +273,7 @@ class game(player):
 
       self.keep = True
       game.mazoplayer1.append(game.cardfrompackage)
-      
+
       cls()
       print "You can't take more cards and have to leave 1!"
       print ''
@@ -286,8 +298,6 @@ class game(player):
 
   def leave(self, card):
 
-    if game.Winneresult():
-      return game.Winneresult()
 #################### PLAYER 1 LEAVE EXCEPTIONS #######################
     if game.playerturn == 1 and self.playerid == 2:
       print ''
@@ -311,19 +321,32 @@ class game(player):
 
 ############################# CASE 1 ############################
 
-    if self.playerid == 1 and self.taked == True and self.keep == False and card != '':
+    if self.playerid == 1 and self.taked == True and self.keep == False:
       
       self.taked = False
       
-      if len(game.mazoplayer1) == 5:
-        print ''
-        return self.name + '!, ' "you haven't got any card!"
+      if card in game.mazoplayer1:
+        return "You can't leave a card if you dont keep it!" 
       
+      if card == '':
+        if len(game.mazoplayer1) > 5:
+          game.displayedcard = game.mazoplayer1.pop()
+        else:
+          game.displayedcard = game.cardfrompackage
+        
+        game.playerturn = 2
+        
+        cls()
+        print game.player1 + ' leaves the card ' + game.displayedcard + '!'
+        print ''
+        print game.startgame(game.playerturn, game.displayedcard)
+        print ''
+        
+        return 'Is your turn ' + game.player2 + '!'
       else:
         
         if card in game.mazoplayer1:
           for i in range(-1, len(game.mazoplayer1)):
-            
             if game.mazoplayer1[i] == card:
               
               game.mazoplayer1.remove(game.mazoplayer1[i])
@@ -338,96 +361,83 @@ class game(player):
               
               return 'Is your turn ' + game.player2 + '!'
 
-############################# CASE 2 ############################   
+############################# CASE 2 ############################    
     
-    if self.playerid == 1 and self.taked == True and self.keep == False and card == '':
-      
-      self.taked = False
-
-      if len(game.mazoplayer1) > 5:
-        game.displayedcard = game.mazoplayer1.pop()
-      else:
-        game.displayedcard = game.cardfrompackage
-        
-      game.playerturn = 2
-
-      cls()
-      print game.player1 + ' leaves the card ' + game.displayedcard + '!'
-      print ''
-      print game.startgame(game.playerturn, game.displayedcard)
-      print ''
-    
-      return 'Is your turn ' + game.player2 + '!'
-
-############################# CASE 3 ############################    
-    
-    if self.playerid == 1 and self.taked == True and self.keep == True and card != '':
+    if self.playerid == 1 and self.taked == True and self.keep == True:
 
       self.taked = False
       self.keep = False
       
-      if card in game.mazoplayer1:
-        for i in range(-1, len(game.mazoplayer1)):
+      if card == '':
+        if game.takedisplayed == True:
+          game.displayedcard = game.previousdisplayed
           
-          if game.mazoplayer1[i] == card:
-            
-            game.mazoplayer1.remove(game.mazoplayer1[i])
-            game.displayedcard = card
-            game.playerturn = 2
-            
-            cls()
-            print game.player1 + ' leaves the card ' + card + '!'
-            print ''
-            print game.startgame(game.playerturn, game.displayedcard)
-            print ''
-            
-            return 'Is your turn ' + game.player2 + '!'
-
-############################# CASE 4 ############################
-
-    if self.playerid == 1 and self.taked == True and self.keep == True and card == '':
-
-      self.taked = False
-      self.keep = False
-      
-      if game.takedisplayed == True:
-        game.displayedcard = game.previousdisplayed
+          for i in range(-1, len(game.mazoplayer1)-1):
+            if game.mazoplayer1[i] == game.displayedcard:
+              
+              game.mazoplayer1 = game.mazoplayer1[:i] + game.mazoplayer1[i+1:]
+        else:
+          game.displayedcard = game.cardfrompackage
         
-        for i in range(-1, len(game.mazoplayer1)-1):
-          if game.mazoplayer1[i] == game.displayedcard:
-            game.mazoplayer1 = game.mazoplayer1[:i] + game.mazoplayer1[i+1:]
-      else:
-        game.displayedcard = game.cardfrompackage
+        game.takedisplayed = False
+        game.playerturn = 2
+        
+        cls()
+        print game.player1 + ' leaves the card ' + game.displayedcard + '!'
+        print ''
+        print game.startgame(game.playerturn, game.displayedcard)
+        print ''
+        
+        return 'Is your turn ' + game.player2 + '!'
       
-      game.takedisplayed = False
-      game.playerturn = 2
+      else:
+        
+        if card in game.mazoplayer1:
+          for i in range(-1, len(game.mazoplayer1)):
+            if game.mazoplayer1[i] == card:
+              
+              game.mazoplayer1.remove(game.mazoplayer1[i])
+              game.displayedcard = card
+              game.playerturn = 2
+              
+              cls()
+              print game.player1 + ' leaves the card ' + card + '!'
+              print ''
+              print game.startgame(game.playerturn, game.displayedcard)
+              print ''
+              
+              return 'Is your turn ' + game.player2 + '!'
 
-      cls()
-      print game.player1 + ' leaves the card ' + game.displayedcard + '!'
-      print ''
-      print game.startgame(game.playerturn, game.displayedcard)
-      print ''
-    
-      return 'Is your turn ' + game.player2 + '!'
-
-
-########################## PLAYER 2 LEAVES ########################    
+######################### PLAYER 2 LEAVES #######################
 
 ############################# CASE 1 ############################
 
-    if self.playerid == 2 and self.taked == True and self.keep == False and card != '':
+    if self.playerid == 2 and self.taked == True and self.keep == False:
       
       self.taked = False
-      
-      if len(game.mazoplayer2) == 5:
+      if card in game.mazoplayer2:
         print ''
-        return self.name + '!, ' "you haven't got any card!"
-      
+        return "You can't leave a card if you dont keep it!" 
+
+      if card == '':
+        if len(game.mazoplayer2) > 5:
+          game.displayedcard = game.mazoplayer2.pop()
+        else:
+          game.displayedcard = game.cardfrompackage
+        
+        game.playerturn = 1
+        
+        cls()
+        print 'Is your turn ' + game.player1 + '!'
+        print ''
+        print game.startgame(game.playerturn, game.displayedcard)
+        print ''
+        
+        return self.name + ' leaves the card ' + game.displayedcard + '!'
       else:
         
         if card in game.mazoplayer2:
           for i in range(-1, len(game.mazoplayer2)):
-            
             if game.mazoplayer2[i] == card:
               
               game.mazoplayer2.remove(game.mazoplayer2[i])
@@ -440,80 +450,52 @@ class game(player):
               print game.startgame(game.playerturn, game.displayedcard)
               print ''
               
-              return game.player2 + ' leaves the card ' + card + '!'
-
-############################# CASE 2 ############################   
-
-    if self.playerid == 2 and self.taked == True and self.keep == False and card == '':
-      
-      self.taked = False
-      
-      if len(game.mazoplayer2) > 5:
-        game.displayedcard = game.mazoplayer2.pop()
-      else:
-        game.displayedcard = game.cardfrompackage
-      
-      game.playerturn = 1
-
-      cls()
-      print 'Is your turn ' + game.player1 + '!'
-      print ''
-      print game.startgame(game.playerturn, game.displayedcard)
-      print ''
-      
-      return game.player2 + ' leaves the card ' + game.displayedcard + '!'
-
-############################# CASE 3 ############################    
+              return self.name + ' leaves the card ' + card + '!'
+############################# CASE 2 ############################    
     
-    if self.playerid == 2 and self.taked == True and self.keep == True and card != '':
+    if self.playerid == 2 and self.taked == True and self.keep == True:
 
       self.taked = False
       self.keep = False
       
-      if card in game.mazoplayer2:
-        for i in range(-1, len(game.mazoplayer2)):
+      if card == '':
+        if game.takedisplayed == True:
+          game.displayedcard = game.previousdisplayed
           
-          if game.mazoplayer2[i] == card:
-            
-            game.mazoplayer2.remove(game.mazoplayer2[i])
-            game.displayedcard = card
-            game.playerturn = 1
-            
-            cls()
-            print 'Is your turn ' + game.player1 + '!'
-            print ''
-            print game.startgame(game.playerturn, game.displayedcard)
-            print ''
-            
-            return game.player2 + ' leaves the card ' + game.displayedcard + '!'
-
-############################# CASE 4 ############################
-
-    if self.playerid == 2 and self.taked == True and self.keep == True and card == '':
-
-      self.taked = False
-      self.keep = False
-      
-      if game.takedisplayed == True:
-        game.displayedcard = game.previousdisplayed
+          for i in range(-1, len(game.mazoplayer2)-1):
+            if game.mazoplayer2[i] == game.displayedcard:
+              
+              game.mazoplayer2 = game.mazoplayer2[:i] + game.mazoplayer2[i+1:]
+        else:
+          game.displayedcard = game.cardfrompackage
         
-        for i in range(-1, len(game.mazoplayer2)-1):
-          if game.mazoplayer2[i] == game.displayedcard:
-            game.mazoplayer2 = game.mazoplayer2[:i] + game.mazoplayer2[i+1:]
+        game.takedisplayed = False
+        game.playerturn = 1
+        
+        cls()
+        print 'Is your turn ' + game.player1 + '!'
+        print ''
+        print game.startgame(game.playerturn, game.displayedcard)
+        print ''
+        
+        return self.name + ' leaves the card ' + game.displayedcard + '!'
       else:
-        game.displayedcard = game.cardfrompackage
-      
-      game.takedisplayed = False
         
-      game.playerturn = 1
-
-      cls()
-      print 'Is your turn ' + game.player1 + '!'
-      print ''
-      print game.startgame(game.playerturn, game.displayedcard)
-      print ''
-      
-      return game.player2 + ' leaves the card ' + game.displayedcard + '!'
+        if card in game.mazoplayer2:
+          for i in range(-1, len(game.mazoplayer2)):
+            if game.mazoplayer2[i] == card:
+              
+              game.mazoplayer2.remove(game.mazoplayer2[i])
+              game.displayedcard = card
+              game.playerturn = 1
+              
+              cls()
+              print 'Is your turn ' + game.player1 + '!'
+              print ''
+              print game.startgame(game.playerturn, game.displayedcard)
+              print ''
+              
+              return self.name + ' leaves the card ' + card + '!'
 
 ###################### TAKE DISPLAYED CARD ####################  
   @property
@@ -590,9 +572,7 @@ class game(player):
         self.keep = True
         
         for i in range(-1, len(game.mazoplayer2)-1):
-
           
-            
           if game.mazoplayer2[i] == game.displayedcard:
             if i == -1:
 
