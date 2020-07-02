@@ -1,3 +1,7 @@
+import os
+def cls():
+    os.system('cls' if os.name=='nt' else 'clear')
+    
 class player:
 
   cards = ['J', '7', '8', 'Q', '4', '10', '6', '9', '2', '1', '5', 'A', '3', 'K', 'A', '7', '5', '3', '4', 'J', '6', '1', 'Q', '9', 'K', '8', '2', '10', 'Q', '4', '1', '10', '2', 'K', '7', '5', '3', '9', '8', 'A', '6', 'J', '6', 'A', '9', '8', '3', '5', '7', 'K', '2', '10', '1', '4', 'Q', 'J', '?']
@@ -13,8 +17,10 @@ class player:
   mazoplayer2 = None
 
   player_id = 0
+  array = []
   
   def __init__(self, name, mazo):
+    player.array.append(self)
     player.player_id += 1
     self.name = name
     self.taked = False
@@ -35,4 +41,28 @@ class player:
     
     self.player_id = player.player_id
 
-##################################################################################
+###################### CHECK WINNER ################
+  def winner():
+    count = 0
+    result = [[], []]
+    i = -1
+    while i != len(player.mazoplayer1)-1:
+      for cards in player.mazoplayer1:
+        if player.mazoplayer1[i] == cards:
+          count += 1
+      result[0].append(count)
+      count = 0
+      i+= 1
+
+    i = -1
+    while i != len(player.mazoplayer2)-1:
+      for cards in player.mazoplayer2:
+        if player.mazoplayer2[i] == cards:
+          count += 1
+      result[1].append(count)
+      count = 0
+      i+= 1
+    if 3 in result[0] and 2 in result[0]:
+      return player.player1 + ' WINS!', player.mazoplayer1
+    if 3 in result[-1] and 2 in result[-1]:
+      return player.player2 + ' WINS!', player.mazoplayer2
