@@ -29,7 +29,7 @@ class game(players.player):
     if self.player_id == 1 or self.player_id == 2:
       game.player_turn = self.player_id
       game.displayed_card = card_to_take
-      print(self.name + "'s play")
+      print(self.name + "'s turn")
       print('')
       print('Player ' + str(self.player_id) + ': ' + self.name, self.mazo)
       print('')
@@ -124,6 +124,11 @@ class game(players.player):
         game.array_num = 0
         game.player_turn = 1
       
+      if self.player_id == 1:
+        players.player.mazoplayer1 = self.mazo
+      else:
+          players.player.mazoplayer2 = self.mazo
+      
       cls()
       print(game.start_game(game.array[game.array_num], game.displayed_card))
       print('')
@@ -152,11 +157,16 @@ class game(players.player):
             else:
               game.array_num = 0
               game.player_turn = 1
-                
+            
+            if self.player_id == 1:
+              players.player.mazoplayer1 = self.mazo
+            else:
+              players.player.mazoplayer2 = self.mazo   
+
             cls()
             print(game.start_game(game.array[game.array_num], game.displayed_card))
             print('')
-            return(game.player1 + ' leaved the card ' + card + '!')
+            return(self.name + ' leaved the card ' + card + '!')
 
 ###################### TAKE DISPLAYED CARD ####################  
   @property
@@ -173,7 +183,7 @@ class game(players.player):
 
 ######################## PLAYER TAKES ######################     
     if self.taked == False and self.keep == False: 
-      if game.displayed_card in game.mazoplayer1:
+      if game.displayed_card in self.mazo:
         
         self.taked = True
         self.keep = True
@@ -185,7 +195,7 @@ class game(players.player):
               self.mazo.append(game.displayed_card)
             else:
               self.mazo = self.mazo[:i+1] + [game.displayed_card] + self.mazo[i+1:]
-            
+    
             game.previousdisplayed = game.displayed_card 
             cls()
             print(game.start_game(self, '?'))
