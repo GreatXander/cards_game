@@ -7,7 +7,7 @@ The rules are very simple, either player can start, when it is a player's turn h
 1- Take the displayed card.
 2- Take a card from the package.
 
--Option 1: For the player to be able to take the displayed card he must have in his deck one that is the same, if so, the player who take the card must leave a card from his deck, if not, then he cannot take the displayed card and is forced to take one from the package.
+-Option 1: For the player to be able to take the displayed card he must have in his deck one that is the same, if so, the player who take the card must leave a card from his deck and that card pass to be the card shown, if not, then he cannot take the displayed card and is forced to take one from the package.
 
 -Option 2: When the player takes a card from the package he decides if he wants to keep it or leave it as the card shown, if the player keeps it then he must leave a card from his deck to be the card shown, otherwise the card that took from the package happens to be the card shown.
 
