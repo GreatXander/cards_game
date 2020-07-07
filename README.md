@@ -20,6 +20,7 @@ The rules are very simple, either player can start, when it is a player's turn h
 -START THE GAME: to start the game we use the declaration of the player who is going to start followed by a period and 'start_game', in parentheses we will put the card we want to be the card shown at the beginning of the game, for example: A. start_game ('J').
 
 (Player actions)
+
 -TAKE A CARD FROM PACKAGE: to take a card from the package we only have to put the declaration of the player that will do it followed by a period and 'take_from_package', for example: A.take_from_package.
 
 -TAKE THE DISPLAYED CARD: We put the declaration of the player that will do it followed by a period and 'take_displayed_card', for example: A.take_displayed_card.
