@@ -15,15 +15,15 @@ The rules are very simple, either player can start, when it is a player's turn h
 
 # How to play with the program
 
-1- Create players: to create the players we use the game class and first specify the name of the player and then the deck of cards to be used, for example: A = game ('Alexander', 1).
+-CREATE PLAYERS: to create the players we use the game class and first specify the name of the player and then the deck of cards to be used, for example: A = game ('Alexander', 1).
 
-2- Start the game: to start the game we use the declaration of the player who is going to start followed by a period and 'start_game', in parentheses we will put the card we want to be the card shown at the beginning of the game, for example: A. start_game ('J').
+-START THE GAME: to start the game we use the declaration of the player who is going to start followed by a period and 'start_game', in parentheses we will put the card we want to be the card shown at the beginning of the game, for example: A. start_game ('J').
 
 (Player actions)
-3- Take a card from the package: to take a card from the package we only have to put the declaration of the player that will do it followed by a period and 'take_from_package', for example: A.take_from_package.
+-TAKE A CARD FROM PACKAGE: to take a card from the package we only have to put the declaration of the player that will do it followed by a period and 'take_from_package', for example: A.take_from_package.
 
-4- Take the displayed card: We put the declaration of the player that will do it followed by a period and 'take_displayed_card', for example: A.take_displayed_card.
+-TAKE THE DISPLAYED CARD: We put the declaration of the player that will do it followed by a period and 'take_displayed_card', for example: A.take_displayed_card.
 
-5- Keep the card: To keep a card that has been taken we only put the declaration of the player that will do it followed by a period and 'keep_card', for example: A.keep_card.
+-KEEP THE CARD: To keep a card that has been taken we only put the declaration of the player that will do it followed by a period and 'keep_card', for example: A.keep_card.
 
-6- Leave the card: To leave a card we only put the declaration of the player that will do it followed by a period and 'leave', if taked a card and don't keep it yet and want to leave it: A.leave(''), otherwise if already keep it: in brackets we put the card that we want to leave, for example: A.leave ('J').
+-LEAVE A CARD: To leave a card we only put the declaration of the player that will do it followed by a period and 'leave', if taked a card and don't keep it yet and want to leave it: A.leave(''), otherwise if already keep it: in brackets we put the card that we want to leave, for example: A.leave ('J').
