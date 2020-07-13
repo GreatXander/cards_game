@@ -32,7 +32,7 @@ class player:
     if player.player_id == 1:
       player.player1 = self.name
       self.mazo = player.barajas_player1[mazo-1]
-      player.mazoplayer1 = player.barajas_player1[mazo-1]
+      self.mazo = player.barajas_player1[mazo-1]
     
     if player.player_id == 2:
       player.player2 =self.name
@@ -42,27 +42,17 @@ class player:
     self.player_id = player.player_id
 
 ###################### CHECK WINNER ################
-  def winner():
+  def winner(self):
     count = 0
-    result = [[], []]
+    result = []
     i = -1
-    while i != len(player.mazoplayer1)-1:
-      for cards in player.mazoplayer1:
-        if player.mazoplayer1[i] == cards:
+    while i != len(self.mazo)-1:
+      for cards in self.mazo:
+        if self.mazo[i] == cards:
           count += 1
-      result[0].append(count)
+      result.append(count)
       count = 0
       i+= 1
-
-    i = -1
-    while i != len(player.mazoplayer2)-1:
-      for cards in player.mazoplayer2:
-        if player.mazoplayer2[i] == cards:
-          count += 1
-      result[1].append(count)
-      count = 0
-      i+= 1
-    if 3 in result[0] and 2 in result[0]:
-      return player.player1 + ' WINS!', player.mazoplayer1
-    if 3 in result[-1] and 2 in result[-1]:
-      return player.player2 + ' WINS!', player.mazoplayer2
+    
+    if 3 in result and 2 in result:
+      return self.name + ' WINS!', self.mazo
