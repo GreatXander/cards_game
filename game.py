@@ -15,21 +15,16 @@ class game(players.player):
 ######################### START GAME ########################
   def start_game(self, card_to_take):
 ######################### START EXCEPTIONS ###################
-    if game.winner():
-      return game.winner()
-    
-    while(str(card_to_take) not in game.cards):
+    while(str(card_to_take).upper() not in game.cards_game):
       cls()
       card_to_take = input('Choose a valid card to show: ')
-      if card_to_take in game.cards:
+      if card_to_take in game.cards_game:
         return self.start_game(card_to_take)
         
 ######################## PLAYER START #####################
     if self.player_id == 1 or self.player_id == 2:
       print()
-      
-      game.player_turn = self.player_id
-      game.displayed_card = card_to_take
+      game.displayed_card = card_to_take.upper()
       
       print(self.name + "'s turn")
       print('')
@@ -56,144 +51,115 @@ class game(players.player):
 
 ################### TAKE CARD FROM PACKAGE ###################
   card_from_package = None
-  card_number = -1
-
+  card_number = 0
+  
   @property
   def take_from_package(self):
-######################## PLAYER TAKES ######################     
+######################## PLAYER TAKES ######################
+    if game.card_number == len(game.cards_game)-2:
+      game.card_number = -1     
+    
+    game.card_from_package = game.cards_game[game.card_number]
+    game.card_number += 1
+    self.taked = True
+    
+    print(self.start_game(game.displayed_card))
+    print(self.name + ' takes from package!')
+    option = input('The card is: ' + str(game.card_from_package) + ': 1.keep or 2.leave: ')
       
-    if self.taked == False:
-      game.card_number += 1
-      game.player_turn = self.player_id
-      self.taked = True
-      game.card_from_package = game.cards[game.card_number]
+    while option != '1' and option != '2':
+      option = input('Choose a valid move: ')
       
-      print(self.start_game(game.displayed_card))
-      print(self.name + ' takes from package!')
-      option = input('The card is: ' + str(game.card_from_package) + ': 1.keep or 2.leave: ')
-      
-      while option != '1' and option != '2':
-        option = input('Choose a valid move: ')
-      
-      if option == '1':
-        return self.keep_card
-      if option == '2':
-        if self.keep == False:
-          return self.leave('')
-        return self.leave(input('Card to leave: '))
-
+    if option == '1':
+      return self.keep_card
+    if option == '2':
+      return self.leave('')
 ########################## KEEP THE CARD ##########################
   @property
   def keep_card(self):  
 ######################### PLAYER KEEPS ##########################
-    
-    if len(self.mazo) < 6 :
-
-      self.keep = True
-      self.mazo.append(game.card_from_package)
-      cls()
+    self.keep = True
+    self.mazo.append(game.card_from_package)
+    cls()
+    if game.winner(self):
       print(game.start_game(self, game.displayed_card))
-      return self.leave(input("You can't take more cards and have to leave 1: "))
+      self.leave(input("You can't take more cards_game and have to leave 1: "))
+      return game.winner(self)
+    else:
+      print(game.start_game(self, game.displayed_card))
+      return self.leave(input("You can't take more cards_game and have to leave 1: "))
 
-######################### LEAVE CARD ############################
+############################# LEAVE CARD ###############################
   def leave(self, card):
-######################### PLAYER LEAVES #######################
-    if self.taked == True and self.keep == False:
-      
-      self.taked = False
-
-      if len(self.mazo) > 5:
-        game.displayed_card = self.mazo.pop()
-      else:
-        game.displayed_card = game.card_from_package
-      
-      if self.player_id == 1: 
-        game.array_num = 1
-        game.player_turn = 2
-      else:
-        game.array_num = 0
-        game.player_turn = 1
-      
-      if self.player_id == 1:
-        players.player.mazoplayer1 = self.mazo
-      else:
-          players.player.mazoplayer2 = self.mazo
-      
-      cls()
-      game.choosed = False
-      print(self.name + ' leaved the card ' + game.displayed_card + '!')
-      return(game.start_game(game.array[game.array_num], game.displayed_card))
-     
-############################# CASE 2 ############################    
-    
-    if self.taked == True and self.keep == True:
-
-      self.taked = False
-      self.keep = False
-      
-      while card == '' or card not in self.mazo:
+############################# Player leaves ############################    
+    self.taked = False
+    self.keep = False
+    if card == '':
+      card = game.card_from_package
+      game.displayed_card = card
+    else:
+      while card.upper() not in self.mazo:
         print()
         card = input('Must insert a valid card to leave: ')
-
-      if card in self.mazo:
-        for i in range(-1, len(self.mazo)):
-          if self.mazo[i] == card:
-            self.mazo.remove(self.mazo[i])
-            game.displayed_card = card
-            
-            if self.player_id == 1: 
-              game.array_num = 1
-              game.player_turn = 2
-            else:
-              game.array_num = 0
-              game.player_turn = 1
-            
-            if self.player_id == 1:
-              players.player.mazoplayer1 = self.mazo
-            else:
-              players.player.mazoplayer2 = self.mazo   
-
-            cls()
-            game.choosed = False
-            print(self.name + ' leaved the card ' + card + '!')
-            return(game.start_game(game.array[game.array_num], game.displayed_card))
+      
+      for i in range(-1, len(self.mazo)-1):
+        if self.mazo[i] == card.upper():
+          self.mazo.remove(self.mazo[i])
+          game.displayed_card = card.upper()
+        
+    if self.player_id == 1: 
+      game.self_index = 1
+    else:
+      game.self_index = 0
+        
+    cls()
+    if game.winner(self):
+      return game.winner(self)
+    else:
+      game.choosed = False
+      print(self.name + ' leaved the card ' + card.upper() + '!')
+      return(game.start_game(game.player_self[game.self_index],game.displayed_card))
             
 ###################### TAKE DISPLAYED CARD ####################  
   @property
   def take_displayed_card(self):
 ######################## PLAYER TAKES ######################     
-    if self.taked == False and self.keep == False: 
-      if game.displayed_card not in self.mazo:
-        print("You don't have a card that matches!, taked from package!")
-        self.take_from_package
-      else:
-        self.taked = True
-        self.keep = True
+    if game.displayed_card not in self.mazo:
+      cls()
+      print("You don't have a card that matches!, taked from package!")
+      self.take_from_package
+    else:
+      self.taked = True
+      self.keep = True
         
-        for i in range(-1, len(self.mazo)-1):
-          if self.mazo[i] == game.displayed_card:
-            if i == -1:
-              self.mazo.append(game.displayed_card)
-            else:
-              self.mazo = self.mazo[:i+1] + [game.displayed_card] + self.mazo[i+1:]
-
-            game.previous_displayed = game.displayed_card 
-            self.leave(input(self.name + ' takes the displayed card ' + game.previous_displayed + '! now have to leave one: '))
-
-one = input('Enter name for player 1: ')
-if one == '':
-  while one == '':
+      for i in range(-1, len(self.mazo)-1):
+        if self.mazo[i] == game.displayed_card.upper():
+          if i == -1:
+            self.mazo.append(game.displayed_card.upper())
+          else:
+            self.mazo = self.mazo[:i+1] + [game.displayed_card.upper()] + self.mazo[i+1:]
+            
+          game.previous_displayed = game.displayed_card 
+            
+          cls()
+          if game.winner(self):
+            print (self.start_game('?'))
+            self.leave(input(self.name + ' takes the displayed card ' +game.previous_displayed + '! now have to leave one: '))
+            return game.winner(self)
+          else:
+            print(self.start_game('?'))
+            return self.leave(input(self.name + ' takes the displayed card ' + game.previous_displayed + '! now have to leave one: '))
+i = 0
+while i <= 1: 
+  i+= 1
+  name = input('Enter name for player ' + str(i) + ': ')
+  while name == '':
     cls()
-    one = input('Enter a valid name: ')
-A = game(one, 1)
-
-two = input('Enter name for player 2: ')
-if two == '':
-  while two == '':
-    cls()
-    two = input('Enter a valid name: ')
-B = game(two, 1)
-
+    name = input('Enter a valid name: ')
+  if i == 1:
+    A = game(name, 1)
+  else:
+    B = game(name, 1)
 cls()
 card_start = input('Specify the first card to show: ')
 cls()
