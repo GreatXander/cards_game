@@ -1,7 +1,3 @@
-import os
-def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
-####################################################
 class player:
 
   cards = ['J', '7', '8', 'Q', '4', '10', '6', '9', '2', '1', '5', 'A', '3', 'K', 'A', '7', '5', '3', '4', 'J', '6', '1', 'Q', '9', 'K', '8', '2', '10', 'Q', '4', '1', '10', '2', 'K', '7', '5', '3', '9', '8', 'A', '6', 'J', '6', 'A', '9', '8', '3', '5', '7', 'K', '2', '10', '1', '4', 'Q', 'J', '?']
@@ -43,4 +39,4 @@ class player:
       count = 0
       card+= 1    
     if 3 in result and 2 in result:
-      return self.name + ' WINS!', self.deck
+      return self.name + ' WINS!', self.deck 
