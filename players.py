@@ -1,19 +1,16 @@
-class player:
-  import random 
-  cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', '?']
-  cards_shuffle = random.sample(cards[:-1], len(cards)-1)
+def get_random_cards():
+    import random 
+    return random.sample(player.cards[:-1], len(player.cards)-1)
 
-  player_id = 0
+class player:
+  cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', '?']
+
   player_self = []
   def __init__(self, name):
     player.player_self.append(self)
-    player.player_id += 1
     self.name = name
-    if player.player_id == 1: 
-      self.deck = player.cards_shuffle[:5]
-    else:
-      self.deck = player.cards_shuffle[6:11]
-    self.player_id = player.player_id
+    self.player_id = len(player.player_self)
+    self.deck = get_random_cards()[:5]
 
   def winner(self):
     count = 0
@@ -27,4 +24,4 @@ class player:
       count = 0
       card+= 1    
     if 3 in result and 2 in result:
-      return self.name + ' WINS!', self.deck
+      return self.name + ' WINS!', self.deck 
