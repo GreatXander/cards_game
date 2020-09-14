@@ -1,5 +1,5 @@
 def get_random_cards():
-    import random 
+    import random
     return random.sample(player.cards[:-1], len(player.cards)-1)
 
 class player:
@@ -22,6 +22,6 @@ class player:
           count += 1
       result.append(count)
       count = 0
-      card+= 1    
+      card+= 1
     if 3 in result and 2 in result:
-      return self.name + ' WINS!', self.deck 
+      return self.name + ' WINS!', self.deck
