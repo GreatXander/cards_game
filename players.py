@@ -4,8 +4,8 @@ def get_random_cards():
 
 class player:
   cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', '?']
-
   player_self = []
+  
   def __init__(self, name):
     player.player_self.append(self)
     self.name = name
