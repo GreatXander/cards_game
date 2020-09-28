@@ -16,16 +16,10 @@ class game(players.player):
     '     1.Package: ' + '[?]' + '     2.Displayed:' + str([displayed_card.upper()])
     )
     return '\n'
-  
-  def card_find_match(self, card):
-    for cards in range(-1, len(self.deck)-1):
-      if self.deck[cards] == card:
-        card_index = cards
-    self.deck.insert(card_index, card)
 
   def start_game(self, displayed_card, option_choosed):
     self.print_game_status(displayed_card)
-    if option_choosed == False:
+    if not option_choosed:
       print("\n")
       option = input('Choose your move ' + self.name + ': ')
       while option != '1' and option != '2':
@@ -38,6 +32,14 @@ class game(players.player):
         print('\n')
         return(self.take_displayed_card)
     return ''
+  
+  def check_card_quantity(player_deck, game_card ):
+    card_count = 0
+    for card in player_deck:
+      if card == game_card:
+          card_count += 1
+    if card_count == 3:
+      return True
 
   @property
   def take_from_package(self):
@@ -49,23 +51,23 @@ class game(players.player):
       option = input('Choose a valid move: ')
     if option == '1':
       return self.keep_card
-    if option == '2':
+    else:
       return self.leave_card('', True)
 
   @property
   def keep_card(self):
+    if(game.check_card_quantity(self.deck, game.card_from_package)):
+      cls()
+      print("You already have 3 of this card, taked from package!")
+      return self.take_from_package
     if game.card_from_package in self.deck:
-      self.card_find_match(game.card_from_package)
+      self.deck.insert(self.deck.index(game.card_from_package), game.card_from_package)
     else:
       self.deck.append(game.card_from_package)
     cls()
     print(self.start_game(game.displayed_card, True))
     option = input("You have to leave one card: ")
-    if game.winner(self):
-      self.leave_card(option, False)
-      return game.winner(self)
-    else:
-      return self.leave_card(option, False)
+    return self.leave_card(option, False)
 
   def leave_card(self, card, is_from_package):
     if is_from_package:
@@ -74,22 +76,18 @@ class game(players.player):
     else:
       while card == '' or card.upper() not in self.deck:
         print('\n')
-        card = input('Must insert a valid card to leave: ').upper()
-      card = card.upper()
-      for cards in range(-1, len(self.deck)-1):
-        if self.deck[cards] == card:
-          self.deck.remove(self.deck[cards])
-          game.displayed_card = card
+        card = input('Must insert a valid card to leave: ')
+      self.deck.remove(self.deck[self.deck.index(card.upper())])
+      game.displayed_card = card
     cls()
     if game.winner(self):
       return game.winner(self)
+    if self.player_id == 1:
+      self_index = 1
     else:
-      if self.player_id == 1:
-        self_index = 1
-      else:
-        self_index = 0
-      print(self.name + ' leaved the card ' + card + '!')
-      return(game.player_self[self_index].start_game(game.displayed_card, False))
+      self_index = 0
+    print(self.name + ' leaved the card ' + card.upper() + '!')
+    return(game.player_self[self_index].start_game(game.displayed_card, False))
 
   @property
   def take_displayed_card(self):
@@ -98,15 +96,16 @@ class game(players.player):
       print("You don't have a card that matches!, taked from package!")
       self.take_from_package
     else:
-      self.card_find_match(game.displayed_card)
-      game.previous_displayed = game.displayed_card
-      cls()
-      print(self.start_game('?', True))
-      option = input(self.name + ' takes the displayed card ' + game.previous_displayed + '!  \n' + 'write the card you want to leave: ')
-      if game.winner(self):
-        self.leave_card(option, False)
-        return game.winner(self)
+      if(game.check_card_quantity(self.deck, game.displayed_card)):
+        cls()
+        print("You already have 3 of this card, taked from package!")
+        self.take_from_package
       else:
+        self.deck.insert(self.deck.index(game.displayed_card), game.displayed_card)
+        game.previous_displayed = game.displayed_card
+        cls()
+        print(self.start_game('?', True))
+        option = input(self.name + ' takes the displayed card ' + game.previous_displayed + '!  \n' + 'write the card you want to leave: ')
         return self.leave_card(option, False)
 
   def Run():
